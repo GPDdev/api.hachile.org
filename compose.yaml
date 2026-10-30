@@ -1,0 +1,43 @@
+services:
+  new-api:
+    image: calciumion/new-api:v1.0.0-rc.47
+    container_name: hachile-api
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - api-data:/data
+    environment:
+      TZ: Asia/Shanghai
+      DEFAULT_LANGUAGE: zh-CN
+      SQLITE_PATH: /data/one-api.db
+      SESSION_SECRET: ${SESSION_SECRET:?Set a persistent random SESSION_SECRET before starting}
+      SESSION_COOKIE_SECURE: "true"
+      SESSION_COOKIE_TRUSTED_URL: https://api.hachile.org
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-none}
+      GOMEMLIMIT: 384MiB
+    mem_limit: 512m
+    cpus: 1.0
+    pids_limit: 128
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:3000/api/status | grep -q '\"success\": *true'"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - proxy
+
+volumes:
+  api-data:
+    name: hachile-api-data
+
+networks:
+  proxy:
+    external: true
+    name: ${PROXY_NETWORK:-1panel-network}

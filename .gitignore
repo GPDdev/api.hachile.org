@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+data/
+logs/
+backups/
+*.db
+*.db-*
+*.sqlite*
+*.pem
+*.key
