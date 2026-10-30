@@ -1,6 +1,6 @@
 # Hachile API 部署交接
 
-状态：用户截图确认 OpenResty 已启动、API 编排成功启动，待健康状态、域名和 HTTPS 验证。更新时间：2026-10-31。
+状态：DNS、HTTP 反向代理及应用健康接口已验证成功，待 HTTPS、管理员初始化和真实模型调用。更新时间：2026-10-31。
 
 ## 1. 当前目标
 
@@ -12,7 +12,7 @@ HTTPS 域名可访问并完成管理员初始化；注册关闭；合法上游�
 
 ## 3. 已确认事实
 
-10 月 30 日截图显示内存 1.04GB/1.83GB，磁盘 10.52GB/39.01GB，CPU 10%；不是当前实时资源占用。10 月 31 日截图确认 OpenResty 1.21.4.3-3-3-focal 已启动，host 网络，HTTP 80、HTTPS 443。最新截图有 Container hachile-api Started 与 docker-compose up successful，已创建卷 hachile-api-data，但没有 healthy 证据。面板还显示 qqbot 编排。10 月 30 日曾核对官方 v1.0.0-rc.47 发布和镜像标签；不是当前最新版本检查。
+10 月 30 日截图显示内存 1.04GB/1.83GB，磁盘 10.52GB/39.01GB，CPU 10%；不是当前实时资源占用。10 月 31 日截图确认 OpenResty 1.21.4.3-3-3-focal 已启动，host 网络，HTTP 80、HTTPS 443；API 编排成功启动并创建 hachile-api-data 卷。面板还有 qqbot 编排。随后 Google 公共 DoH 确认 api.hachile.org A 记录为 47.101.65.25；HTTP /api/status 返回 200、success=true、version=v1.0.0-rc.47、system_name=New API，Server 为 openresty。最初一次 HTTP 502 后复查成功，不据此判断持续故障。容器自身 healthy 标记尚未查看。HTTPS 请求仍在正常 TLS 校验下失败，内层信息为 unexpected EOF，不能当作证书已部署或证书错误类型已确定。
 
 ## 4. 相关文件与命令
 
@@ -24,8 +24,8 @@ HTTPS 域名可访问并完成管理员初始化；注册关闭；合法上游�
 
 ## 6. 风险与待确认项
 
-容器启动不代表应用健康；尚未验证源站证书、初始化及模型调用。2026-10-31 Google 公共 DoH 查询返回 api.hachile.org CNAME gpddev.github.io，须改为服务器的 A 记录；本机 198.18.0.127 是代理保留地址，不能用作真实公共解析证据。OpenResty 256MB 与 API 512MB 均是资源预算。API 信任代理初始为 none，真实代理来源待确认。截图含密钥，不得复制到文件、仓库或交接记录；初始化前应由用户换成新的随机值。面板控制受工具阻断，后续操作暂需用户完成。Home/Site 同步与部署验收均待真实服务上线。
+尚未验证源站证书、初始化及模型调用。公网 DNS 已切换成功，无需继续修改 GitHub 或其余域名解析；本机 198.18.0.127 是代理保留地址，不能用作公共解析证据。OpenResty 256MB 与 API 512MB 均是资源预算。API 信任代理初始为 none，真实代理来源待确认。截图含密钥，不得复制到文件、仓库或交接记录；初始化前应由用户换成新的随机值。面板控制受工具阻断，后续操作暂需用户完成。Home/Site 同步与最终部署验收待 HTTPS、初始化与真实调用通过。
 
 ## 7. 下一步动作
 
-用户在 1Panel 的“网站 → 创建网站”选择反向代理，域名 api.hachile.org，上游 http://127.0.0.1:3000；随后配置域名解析与 HTTPS。收集创建页字段截图，不能假定站点或证书已创建；以容器 healthy 和 HTTPS /api/status 成功为验证条件。
+用户进入 1Panel 的 api.hachile.org 网站配置，打开 HTTPS，申请并部署该域名证书，可先使用 HTTP 验证。需要时收集 HTTPS 设置页截图；完成后用正常证书校验请求 https://api.hachile.org/api/status，预期 success=true，再完成管理员初始化和真实上游调用。
