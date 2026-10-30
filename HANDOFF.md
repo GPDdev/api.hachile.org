@@ -16,7 +16,7 @@ HTTPS 域名可访问并完成管理员初始化；注册关闭；合法上游�
 
 ## 4. 相关文件与命令
 
-项目根目录 D:\Desktop\hachile-workspace\api.hachile.org，远程 https://github.com/GPDdev/api.hachile.org，分支 main。compose.yaml 限制应用内存为 512MB，SQLite 使用持久卷，主机端口仅监听回环；.env.example 说明服务器端必填值；README.md 是 1Panel 导入、反向代理和验收步骤；GitHub Actions 校验 Compose。未保存任何凭据。Python/PyYAML 已成功解析 YAML，并检查单服务、回环绑定、密钥必填、512MB 预算与卷名。当前电脑无 Docker；实际 Compose schema 检查交给仓库内 Validate deployment configuration workflow，最终状态应通过 gh run list 核对。此文件随首次部署配置提交，具体 SHA 使用 git log -1 核对，不在文内自引用。
+项目根目录 D:\Desktop\hachile-workspace\api.hachile.org，远程 https://github.com/GPDdev/api.hachile.org，分支 main。部署文件已以 dfe9d87 提交并推送。compose.yaml 限制应用内存为 512MB，SQLite 使用持久卷，主机端口仅监听回环；.env.example 说明服务器端必填值；README.md 是 1Panel 导入、反向代理和验收步骤；GitHub Actions 校验 Compose。未保存任何凭据。Python/PyYAML 已成功解析 YAML，并检查单服务、回环绑定、密钥必填、512MB 预算与卷名。当前电脑无 Docker；GitHub Actions 运行 41085253306 已完成且结论 success，docker compose config --quiet 校验通过。这是配置检查，不能代替服务器上的镜像启动、网络和真实请求验证。
 
 ## 5. 已否决方案
 
