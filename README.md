@@ -1,6 +1,14 @@
 # Hachile API
 
-基于 [New API](https://github.com/QuantumNous/new-api) 的自用模型网关部署配置，计划使用 https://api.hachile.org 。2026-10-31 用户截图确认 OpenResty 已启动、API 编排成功启动；健康检查、域名 HTTPS 和真实上游调用仍待验证。
+基于 [New API](https://github.com/QuantumNous/new-api) 的自用模型网关部署配置，计划使用 https://api.hachile.org 。2026-10-31 用户截图确认 OpenResty 已启动、API 编排成功启动。HTTP 健康接口曾成功，随后公网首页、健康接口及证书验证路径均返回阿里云备案拦截 403；当前公开部署被备案条件阻塞，HTTPS 和真实调用未完成。
+
+## 当前部署前提
+
+实测响应 Server 为 Beaver，页面标题为 Non-compliance ICP Filing，包含阿里云 beian-block 页面。HTTP-01 申请证书因此返回 403，继续修改 OpenResty 路径不能消除这层拦截。
+
+阿里云官方说明指出，未完成备案或接入备案的域名解析至其中国内地服务器会被阻断；其当前域名限制说明还将 .org 列为未取得注册管理机构许可的示例，而备案要求域名与注册商获批。要保留 api.hachile.org，可选择在非中国内地服务器部署；若继续使用当前中国内地服务器，则需先选择满足要求的域名并完成适用备案流程。此处没有购买、迁移服务器或改动现有 DNS。DNS 验证即使取得证书，也不能消除网站访问的备案拦截。
+
+依据：[未备案域名访问规则](https://help.aliyun.com/zh/icp-filing/not-for-the-record-dns-can-access-to-different-areas)、[域名限制与备案条件](https://help.aliyun.com/zh/dws/product-overview/limits)。下方部署步骤需在托管前提满足后继续，不能当作当前服务已上线。
 
 使用官方预构建镜像 `calciumion/new-api:v1.0.0-rc.47`，版本名称带有 rc 标记。部署采用单实例与 SQLite，数据保存在 Docker 卷 `hachile-api-data`，适合先进行小规模自用测试。
 
