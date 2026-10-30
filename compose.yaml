@@ -3,6 +3,8 @@ services:
     image: calciumion/new-api:v1.0.0-rc.47
     container_name: hachile-api
     restart: unless-stopped
+    env_file:
+      - 1panel.env
     ports:
       - "127.0.0.1:3000:3000"
     volumes:
@@ -11,10 +13,9 @@ services:
       TZ: Asia/Shanghai
       DEFAULT_LANGUAGE: zh-CN
       SQLITE_PATH: /data/one-api.db
-      SESSION_SECRET: ${SESSION_SECRET:?Set a persistent random SESSION_SECRET before starting}
       SESSION_COOKIE_SECURE: "true"
       SESSION_COOKIE_TRUSTED_URL: https://api.hachile.org
-      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-none}
+      TRUSTED_PROXIES: none
       GOMEMLIMIT: 384MiB
     mem_limit: 512m
     cpus: 1.0

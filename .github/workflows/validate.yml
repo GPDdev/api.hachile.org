@@ -12,7 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate Compose interpolation and schema
-        env:
-          SESSION_SECRET: validation-only-not-a-deployment-secret
-        run: docker compose -f compose.yaml config --quiet
+      - name: Validate 1Panel environment loading and Compose schema
+        run: |
+          printf '%s\n' 'SESSION_SECRET=validation-only-not-a-deployment-secret' > 1panel.env
+          docker compose -f compose.yaml config --quiet
+          docker compose -f compose.yaml config --format json | python3 -c 'import json,sys; app=json.load(sys.stdin)["services"]["new-api"]; assert app["environment"]["SESSION_SECRET"] == "validation-only-not-a-deployment-secret", "1panel.env was not loaded"'
