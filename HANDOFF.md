@@ -16,7 +16,7 @@ HTTPS 域名可访问并完成管理员初始化；注册关闭；合法上游�
 
 ## 4. 相关文件与命令
 
-项目根目录 D:\Desktop\hachile-workspace\api.hachile.org，远程 https://github.com/GPDdev/api.hachile.org，分支 main。本次修改前本地与远程均为 96fe9da，工作区干净。compose.yaml 使用 env_file: [1panel.env]，配套 1panel.env.example；该私密文件已被 gitignore 排除。移除 SESSION_SECRET 插值，避免 1Panel 保存变量后仍在 Compose 插值时报错；用户按相同修改启动成功。应用限内存 512MB，SQLite 使用持久卷，主机端口仅监听回环。README.md 为部署说明；CI 新增容器最终环境必须从 1panel.env 取得测试值的检查。无密钥保存在仓库。当前电脑无 Docker；旧版 Actions 41093080012 成功不覆盖新环境文件处理，需检查本次提交的 CI。
+项目根目录 D:\Desktop\hachile-workspace\api.hachile.org，远程 https://github.com/GPDdev/api.hachile.org，分支 main。环境文件修正已以 aa8a260 推送。compose.yaml 使用 env_file: [1panel.env]，配套 1panel.env.example；该私密文件已被 gitignore 排除。移除 SESSION_SECRET 插值，避免 1Panel 保存变量后仍在 Compose 插值时报错；用户按相同修改启动成功。应用限内存 512MB，SQLite 使用持久卷，主机端口仅监听回环。无密钥保存在仓库。Python YAML/关键配置检查、git diff --check、git check-ignore 验证通过；当前电脑无 Docker，Actions 41098810211 对 aa8a260 的 Compose schema 和最终容器环境加载检查已返回 success。
 
 ## 5. 已否决方案
 
