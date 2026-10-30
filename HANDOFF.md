@@ -16,7 +16,7 @@ HTTPS 域名可访问并完成管理员初始化；注册关闭；合法上游�
 
 ## 4. 相关文件与命令
 
-项目根目录 D:\Desktop\hachile-workspace\api.hachile.org，远程 https://github.com/GPDdev/api.hachile.org，分支 main。此前已推送部署配置及交接记录，修改前本地与远程均为 0afc067 且工作区干净。本次修改 compose.yaml、.env.example、README.md 和本文件，移除外部网络依赖，host OpenResty 的目标改为 http://127.0.0.1:3000。应用仍限内存 512MB，SQLite 使用持久卷，主机端口仅监听回环。未保存凭据。当前电脑无 Docker；历史 Actions 41085253306 成功，但只验证旧版配置，新版需运行同一 Validate deployment configuration 工作流核对。配置检查不能代替服务器运行验证。
+项目根目录 D:\Desktop\hachile-workspace\api.hachile.org，远程 https://github.com/GPDdev/api.hachile.org，分支 main。host 网络修正已以 10b437f 推送，修改 compose.yaml、.env.example、README.md 和本文件，移除外部网络依赖，OpenResty 的目标改为 http://127.0.0.1:3000。应用仍限内存 512MB，SQLite 使用持久卷，主机端口仅监听回环。未保存凭据。Python/PyYAML 检查和 git diff --check 通过；当前电脑无 Docker，GitHub Actions 41093080012 已验证该提交的 docker compose config --quiet 并返回 success。配置检查不能代替服务器运行验证。
 
 ## 5. 已否决方案
 
