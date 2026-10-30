@@ -30,14 +30,7 @@ services:
       timeout: 5s
       retries: 3
       start_period: 30s
-    networks:
-      - proxy
 
 volumes:
   api-data:
     name: hachile-api-data
-
-networks:
-  proxy:
-    external: true
-    name: ${PROXY_NETWORK:-1panel-network}

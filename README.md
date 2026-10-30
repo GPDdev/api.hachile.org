@@ -12,16 +12,16 @@
 
 ## 在 1Panel 部署
 
-1. 在应用商店安装或确认已有 OpenResty。打开“容器 → 网络”，确认 OpenResty 所在 Docker 网络名称。常见名称为 `1panel-network`，以实际界面为准。
+1. 在应用商店安装 OpenResty。2026-10-31 的安装截图明确显示使用 host 网络模式；保留 HTTP 80、HTTPS 443 和自动容器名称。CPU 可设为 1 核，内存先设为 256MB，保留拉取镜像，使用应用默认 compose。这个内存值是自用起步预算，安装后需要观察是否有异常重启。
 2. 打开“容器 → 编排”，创建名为 `hachile-api` 的编排，将 [compose.yaml](compose.yaml) 内容填入编辑器。
-3. 在该编排的环境变量中填写 `SESSION_SECRET` 和 `PROXY_NETWORK`。也可在同目录创建 `.env`，参考 [.env.example](.env.example)。会话密钥需要在服务器生成一次并保存，可用 `openssl rand -hex 32`；它与面板登录密码无关。
-4. 启动编排。确认容器 `hachile-api` 正常运行，健康检查变为 healthy。若报告 network not found，核对第 1 步的网络名称；若拉取镜像失败，查看镜像拉取日志。
-5. 在 1Panel 的“网站”中创建 `api.hachile.org` 的反向代理站点。OpenResty 与应用须在同一个 Docker 网络，代理目标填写 `http://hachile-api:3000`。不要在 OpenResty 容器中把 `127.0.0.1` 当成应用地址。
+3. 在该编排的环境变量中填写 `SESSION_SECRET`。也可在同目录创建 `.env`，参考 [.env.example](.env.example)。会话密钥需要在服务器生成一次并保存，可用 `openssl rand -hex 32`；它与面板登录密码无关。
+4. 启动编排。确认容器 `hachile-api` 正常运行，健康检查变为 healthy。应用使用 Compose 自动创建的 bridge 网络，无需外部网络；若拉取镜像失败，查看镜像拉取日志。
+5. 在 1Panel 的“网站”中创建 `api.hachile.org` 的反向代理站点。host 模式的 OpenResty 与服务器共用网络，代理目标填写 `http://127.0.0.1:3000`，通过主机回环端口访问应用。此方案无需将 OpenResty 加入应用的 Docker 网络。
 6. 在 Cloudflare 为 `api` 添加指向服务器公网 IP 的 A 记录。先完成源站 HTTPS 证书配置，再启用访问；如果启用 Cloudflare 代理，SSL 模式使用 Full (strict)。
 7. 为反向代理启用 WebSocket 支持，并关闭响应缓冲，以便流式输出。下方提供 location 内应具备的配置项；1Panel 已生成的项目应修改现有项，避免重复添加。
 8. 通过 `https://api.hachile.org` 完成 New API 初始化，设置名称为 `Hachile API`。保留上游署名及项目链接。自用场景关闭公共注册，再添加已授权的上游渠道、模型与配额，在控制台测试后创建自己的调用令牌。上游密钥只填在服务端控制台。
 
-编排的 3000 端口只绑定服务器回环地址。首次初始化也通过 HTTPS 域名完成；配置启用了 Secure Cookie 和 HTTPS Origin 校验，直接用公网 IP 加 HTTP 地址登录不能作为部署成功的验证。
+编排的 3000 端口只绑定服务器回环地址，保持此设置；对外访问通过 OpenResty 的 80/443 端口。首次初始化也通过 HTTPS 域名完成；配置启用了 Secure Cookie 和 HTTPS Origin 校验，直接用公网 IP 加 HTTP 地址登录不能作为部署成功的验证。若 80/443 无法访问，检查阿里云安全组及服务器防火墙的对应规则。
 
 反向代理的 location 配置参考：
 
@@ -38,7 +38,7 @@ proxy_read_timeout 300s;
 proxy_send_timeout 300s;
 ```
 
-`TRUSTED_PROXIES` 初始为 `none`，应用不会信任转发的来源 IP。确认 OpenResty 的容器地址后，可将该值设为实际代理地址；这会影响来源 IP 记录与按 IP 限流。代理容器重建后需核对地址。
+`TRUSTED_PROXIES` 初始为 `none`，应用不会信任转发的来源 IP。确认应用实际看到的代理来源地址后，可将该值设为该地址；经过 Docker 端口转发时，不能仅凭 OpenResty 使用 host 模式就假定来源是 127.0.0.1。这会影响来源 IP 记录与按 IP 限流。
 
 ## 验收与备份
 
